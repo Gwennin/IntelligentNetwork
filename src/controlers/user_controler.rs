@@ -1,24 +1,19 @@
 use iron::prelude::{Response, IronResult};
 use iron::status;
 use iron::request::*;
-use iron::headers::ContentType;
-use iron::modifiers::Header;
 use rustc_serialize::json;
 use std::io::Read;
 use router::Router;
 use model::*;
+use managers::response_manager::ResponseManager;
 
 pub struct UserControler;
 
 impl UserControler {
     pub fn list_users(req: &mut Request) -> IronResult<Response> {
-
         let users = User::list_users();
 
-        let encoded = json::encode(&users).unwrap();
-
-        let response: IronResult<Response> = Ok(Response::with((status::Ok, Header(ContentType::json()), encoded)));
-        return response;
+        ResponseManager::get_response(&users)
     }
 
     pub fn add_user(req: &mut Request) -> IronResult<Response> {
@@ -31,49 +26,44 @@ impl UserControler {
             owner: user.username.to_string()
         };
 
-        User::add_user(&user);
+        let new_user = User::add_user(&user);
+
+        match new_user {
+            Err(ref err) => return ResponseManager::get_response(&new_user),
+            _ => {}
+        }
+
         Space::add_private_space(&space);
 
-        let response: IronResult<Response> = Ok(Response::with((status::Ok, "")));
+        let response: IronResult<Response> = Ok(Response::with((status::NoContent)));
         return response;
     }
 
     pub fn delete_user(req: &mut Request) -> IronResult<Response> {
-        
         let alias = req.extensions.get::<Router>().unwrap().find("alias").unwrap().to_string();
 
-        User::delete_user(alias);
-
-        let response: IronResult<Response> = Ok(Response::with((status::Ok, "")));
-        return response;
+        let result = User::delete_user(alias);
+        ResponseManager::get_response_no_content(&result)
     }
 
     pub fn change_password(req: &mut Request) -> IronResult<Response> {
-        
         let alias = req.extensions.get::<Router>().unwrap().find("alias").unwrap().to_string();
 
         let mut password = String::new();
         req.body.read_to_string(&mut password);
         
-        User::change_password(alias, password);
-        
-        let response: IronResult<Response> = Ok(Response::with((status::Ok, "")));
-        return response;
+        let result = User::change_password(alias, password);
+        ResponseManager::get_response_no_content(&result)
     }
 
     pub fn spaces(req: &mut Request) -> IronResult<Response> {
-        
         let alias = req.extensions.get::<Router>().unwrap().find("alias").unwrap().to_string();
 
         let spaces = User::list_user_spaces(alias);
-        let encoded = json::encode(&spaces).unwrap();
-
-        let response: IronResult<Response> = Ok(Response::with((status::Ok, Header(ContentType::json()), encoded)));
-        return response;
+        ResponseManager::get_response(&spaces)
     }
 
     pub fn add_space(req: &mut Request) -> IronResult<Response> {
-        
         let alias = req.extensions.get::<Router>().unwrap().find("alias").unwrap().to_string();
         let space = req.extensions.get::<Router>().unwrap().find("space").unwrap().to_string();
 
@@ -82,14 +72,11 @@ impl UserControler {
             space_id: space
         };
 
-        User::add_space(user_space);
-
-        let response: IronResult<Response> = Ok(Response::with((status::Ok, "")));
-        return response;
+        let result = User::add_space(user_space);
+        ResponseManager::get_response_no_content(&result)
     }
 
     pub fn delete_space(req: &mut Request) -> IronResult<Response> {
-        
         let alias = req.extensions.get::<Router>().unwrap().find("alias").unwrap().to_string();
         let space = req.extensions.get::<Router>().unwrap().find("space").unwrap().to_string();
 
@@ -98,20 +85,14 @@ impl UserControler {
             space_id: space
         };
 
-        User::delete_space(user_space);
-
-        let response: IronResult<Response> = Ok(Response::with((status::Ok, "")));
-        return response;
+        let result = User::delete_space(user_space);
+        ResponseManager::get_response_no_content(&result)
     }
 
     pub fn owned_spaces(req: &mut Request) -> IronResult<Response> {
-        
         let alias = req.extensions.get::<Router>().unwrap().find("alias").unwrap().to_string();
 
         let spaces = User::list_owned_spaces(alias);
-        let encoded = json::encode(&spaces).unwrap();
-
-        let response: IronResult<Response> = Ok(Response::with((status::Ok, Header(ContentType::json()), encoded)));
-        return response;
+        ResponseManager::get_response(&spaces)
     }
 }

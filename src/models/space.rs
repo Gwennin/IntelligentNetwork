@@ -9,11 +9,11 @@ use rustc_serialize::{Encodable, Encoder};
 
 impl Encodable for Space {
     fn encode<S: Encoder>(&self, s: &mut S) -> Result<(), S::Error> {
-        s.emit_struct("Space", 1, |s| {
+        s.emit_struct("Space", 2, |s| {
             try!(s.emit_struct_field("name", 0, |s| {
                 s.emit_str(&self.name)
             }));
-            try!(s.emit_struct_field("owner", 0, |s| {
+            try!(s.emit_struct_field("owner", 1, |s| {
                 s.emit_str(&self.owner)
             }));
             Ok(())

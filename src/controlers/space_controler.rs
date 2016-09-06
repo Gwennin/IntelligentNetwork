@@ -28,7 +28,7 @@ impl SpaceControler {
         let space: NewSpace = json::decode(&body).unwrap();
         Space::add_space(&space);
 
-        let response: IronResult<Response> = Ok(Response::with((status::Ok, "")));
+        let response: IronResult<Response> = Ok(Response::with((status::NoContent)));
         return response;
     }
 
@@ -37,7 +37,7 @@ impl SpaceControler {
 
         Space::delete_space(name);
 
-        let response: IronResult<Response> = Ok(Response::with((status::Ok, "")));
+        let response: IronResult<Response> = Ok(Response::with((status::NoContent)));
         return response;
     }
 
@@ -73,7 +73,7 @@ impl SpaceControler {
 
         Link::delete_link(link_id, name);
 
-        let response: IronResult<Response> = Ok(Response::with((status::Ok, "")));
+        let response: IronResult<Response> = Ok(Response::with((status::NoContent)));
         return response;
     }
 
@@ -84,7 +84,7 @@ impl SpaceControler {
 
         Link::set_link_read(link_id, user);
 
-        let response: IronResult<Response> = Ok(Response::with((status::Ok, "")));
+        let response: IronResult<Response> = Ok(Response::with((status::NoContent)));
         return response;
     }
 

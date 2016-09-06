@@ -17,6 +17,7 @@ include!(concat!(env!("OUT_DIR"), "/model.rs"));
 mod managers;
 mod controlers;
 mod models;
+mod errors;
 
 use managers::server_manager::ServerManager;
 

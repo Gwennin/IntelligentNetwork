@@ -20,3 +20,4 @@ chrono = { version = "*", features = ["rustc-serialize"] }
 
 [features]
 default = ["syntex", "diesel_codegen_syntex"]
+teapot = ["default"]
