@@ -1,0 +1,1 @@
+infer_schema!("postgres://minig@localhost/intelligent_network");
