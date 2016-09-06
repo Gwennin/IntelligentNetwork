@@ -1,5 +1,4 @@
 use iron::prelude::{Response, IronResult};
-use iron::status;
 use iron::request::*;
 use rustc_serialize::json;
 use std::io::Read;
@@ -33,10 +32,8 @@ impl UserControler {
             _ => {}
         }
 
-        Space::add_private_space(&space);
-
-        let response: IronResult<Response> = Ok(Response::with((status::NoContent)));
-        return response;
+        let result = Space::add_private_space(&space);
+        ResponseManager::get_response_no_content(&result)
     }
 
     pub fn delete_user(req: &mut Request) -> IronResult<Response> {

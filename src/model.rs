@@ -26,7 +26,6 @@ pub struct Space {
 }
 
 #[derive(RustcDecodable)]
-#[insertable_into(spaces)]
 pub struct NewSpace {
     pub name: String,
     pub owner: String,

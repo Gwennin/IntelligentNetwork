@@ -1,13 +1,11 @@
 use iron::prelude::{Response, IronResult};
-use iron::status;
 use iron::request::*;
-use iron::headers::ContentType;
-use iron::modifiers::Header;
 use rustc_serialize::json;
 use std::io::Read;
 use std::str::FromStr;
 use router::Router;
 use model::*;
+use managers::response_manager::ResponseManager;
 
 pub struct SpaceControler;
 
@@ -15,10 +13,7 @@ impl SpaceControler {
     pub fn list_public_spaces(req: &mut Request) -> IronResult<Response> {
         let spaces = Space::list_public_spaces();
 
-        let encoded = json::encode(&spaces).unwrap();
-
-        let response: IronResult<Response> = Ok(Response::with((status::Ok, Header(ContentType::json()), encoded)));
-        return response;
+        ResponseManager::get_response(&spaces)
     }
 
     pub fn add_space(req: &mut Request) -> IronResult<Response> {
@@ -26,29 +21,22 @@ impl SpaceControler {
         req.body.read_to_string(&mut body);
 
         let space: NewSpace = json::decode(&body).unwrap();
-        Space::add_space(&space);
 
-        let response: IronResult<Response> = Ok(Response::with((status::NoContent)));
-        return response;
+        let result = Space::add_space(&space);
+        ResponseManager::get_response_no_content(&result)
     }
 
     pub fn delete_space(req: &mut Request) -> IronResult<Response> {
         let name = req.extensions.get::<Router>().unwrap().find("name").unwrap().to_string();
 
-        Space::delete_space(name);
-
-        let response: IronResult<Response> = Ok(Response::with((status::NoContent)));
-        return response;
+        let result = Space::delete_space(name);
+        ResponseManager::get_response_no_content(&result)
     }
 
     pub fn list_links(req: &mut Request) -> IronResult<Response> {
         let name = req.extensions.get::<Router>().unwrap().find("name").unwrap().to_string();
         let links = Link::list_links(name);
-
-        let encoded = json::encode(&links).unwrap();
-
-        let response: IronResult<Response> = Ok(Response::with((status::Ok, Header(ContentType::json()), encoded)));
-        return response;
+        ResponseManager::get_response(&links)
     }
 
     pub fn add_link(req: &mut Request) -> IronResult<Response> {
@@ -59,11 +47,7 @@ impl SpaceControler {
         let link: NewLink = json::decode(&body).unwrap();
 
         let inserted = Link::add_link(&link, name);
-
-        let encoded = json::encode(&inserted).unwrap();
-
-        let response: IronResult<Response> = Ok(Response::with((status::Ok, Header(ContentType::json()), encoded)));
-        return response;
+        ResponseManager::get_response(&inserted)
     }
 
     pub fn delete_link(req: &mut Request) -> IronResult<Response> {
@@ -71,10 +55,8 @@ impl SpaceControler {
         let str_id = req.extensions.get::<Router>().unwrap().find("id").unwrap().to_string();
         let link_id: i32 = FromStr::from_str(&str_id).unwrap();
 
-        Link::delete_link(link_id, name);
-
-        let response: IronResult<Response> = Ok(Response::with((status::NoContent)));
-        return response;
+        let result = Link::delete_link(link_id, name);
+        ResponseManager::get_response_no_content(&result)
     }
 
     pub fn set_link_read(req: &mut Request) -> IronResult<Response> {
@@ -82,10 +64,7 @@ impl SpaceControler {
         let str_id = req.extensions.get::<Router>().unwrap().find("id").unwrap().to_string();
         let link_id: i32 = FromStr::from_str(&str_id).unwrap();
 
-        Link::set_link_read(link_id, user);
-
-        let response: IronResult<Response> = Ok(Response::with((status::NoContent)));
-        return response;
+        let result = Link::set_link_read(link_id, user);
+        ResponseManager::get_response_no_content(&result)
     }
-
 }
