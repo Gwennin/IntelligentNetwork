@@ -7,9 +7,9 @@ use router::Router;
 use model::*;
 use managers::response_manager::ResponseManager;
 
-pub struct SpaceControler;
+pub struct SpaceController;
 
-impl SpaceControler {
+impl SpaceController {
     pub fn list_public_spaces(req: &mut Request) -> IronResult<Response> {
         let spaces = Space::list_public_spaces();
 

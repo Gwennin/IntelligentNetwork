@@ -6,9 +6,9 @@ use router::Router;
 use model::*;
 use managers::response_manager::ResponseManager;
 
-pub struct UserControler;
+pub struct UserController;
 
-impl UserControler {
+impl UserController {
     pub fn list_users(req: &mut Request) -> IronResult<Response> {
         let users = User::list_users();
 

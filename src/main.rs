@@ -15,7 +15,7 @@ extern crate chrono;
 include!(concat!(env!("OUT_DIR"), "/model.rs"));
 
 mod managers;
-mod controlers;
+mod controllers;
 mod models;
 mod errors;
 

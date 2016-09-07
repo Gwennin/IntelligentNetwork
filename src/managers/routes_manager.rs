@@ -1,25 +1,25 @@
 use router::Router;
-use controlers::user_controler::*;
-use controlers::space_controler::*;
+use controllers::user_controller::*;
+use controllers::space_controller::*;
 
 pub fn apply_routes() -> Router {
     let mut router = Router::new();
 
-    router.get("/users", UserControler::list_users, "list_users");
-    router.post("/users/add", UserControler::add_user, "add_user");
-    router.delete("/users/:alias/delete", UserControler::delete_user, "delete_user");
-    router.put("/users/:alias/change/password", UserControler::change_password, "change_password");
-    router.get("/users/:alias/spaces", UserControler::spaces, "spaces");
-    router.post("/users/:alias/spaces/add/:space", UserControler::add_space, "add_spaces");
-    router.delete("/users/:alias/spaces/delete/:space", UserControler::delete_space, "delete_spaces");
-    router.get("/users/:alias/spaces/owned", UserControler::owned_spaces, "owned_spaces");
-    router.get("/spaces", SpaceControler::list_public_spaces, "list_public_spaces");
-    router.post("/spaces/add", SpaceControler::add_space, "add_space");
-    router.delete("/spaces/:name/delete", SpaceControler::delete_space, "delete_space");
-    router.get("/spaces/:name", SpaceControler::list_links, "list_links");
-    router.post("/spaces/:name/add/link", SpaceControler::add_link, "add_link");
-    router.delete("/spaces/:name/delete/link/:id", SpaceControler::delete_link, "delete_link");
-    router.put("/spaces/:name/read/:id/:user", SpaceControler::set_link_read, "set_link_read");
+    router.get("/users", UserController::list_users, "list_users");
+    router.post("/users/add", UserController::add_user, "add_user");
+    router.delete("/users/:alias/delete", UserController::delete_user, "delete_user");
+    router.put("/users/:alias/change/password", UserController::change_password, "change_password");
+    router.get("/users/:alias/spaces", UserController::spaces, "spaces");
+    router.post("/users/:alias/spaces/add/:space", UserController::add_space, "add_spaces");
+    router.delete("/users/:alias/spaces/delete/:space", UserController::delete_space, "delete_spaces");
+    router.get("/users/:alias/spaces/owned", UserController::owned_spaces, "owned_spaces");
+    router.get("/spaces", SpaceController::list_public_spaces, "list_public_spaces");
+    router.post("/spaces/add", SpaceController::add_space, "add_space");
+    router.delete("/spaces/:name/delete", SpaceController::delete_space, "delete_space");
+    router.get("/spaces/:name", SpaceController::list_links, "list_links");
+    router.post("/spaces/:name/add/link", SpaceController::add_link, "add_link");
+    router.delete("/spaces/:name/delete/link/:id", SpaceController::delete_link, "delete_link");
+    router.put("/spaces/:name/read/:id/:user", SpaceController::set_link_read, "set_link_read");
 
     return router
 }
