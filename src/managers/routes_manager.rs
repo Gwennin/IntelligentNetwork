@@ -1,9 +1,13 @@
 use router::Router;
 use controllers::user_controller::*;
 use controllers::space_controller::*;
+use controllers::login_controller::*;
 
 pub fn apply_routes() -> Router {
     let mut router = Router::new();
+
+    router.get("/login", LoginController::login, "login");
+    router.get("/logout", LoginController::logout, "logout");
 
     router.get("/users", UserController::list_users, "list_users");
     router.post("/users/add", UserController::add_user, "add_user");

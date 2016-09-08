@@ -17,6 +17,7 @@ diesel = { version = "0.7.0", features = ["chrono"] }
 diesel_codegen = { version = "0.7.0", features = ["postgres"], optional = true }
 dotenv = "0.8.0"
 chrono = { version = "*", features = ["rustc-serialize"] }
+uuid = { version = "0.2", features = ["v4"] }
 
 [features]
 default = ["syntex", "diesel_codegen_syntex"]

@@ -42,4 +42,8 @@ impl ResponseManager {
             None => Ok(Response::with((status::NoContent))),
         }
     }
+
+    pub fn get_unauthorized() -> IronResult<Response> {
+        Ok(Response::with((status::Unauthorized)))
+    }
 }

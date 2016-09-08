@@ -3,7 +3,7 @@ use managers::db_manager::*;
 use schema::users::dsl::*;
 use schema::user_spaces::dsl::*;
 use schema::spaces::dsl::*;
-use diesel::{LoadDsl, FilterDsl, ExpressionMethods, ExecuteDsl, SelectDsl};
+use diesel::{LoadDsl, FilterDsl, ExpressionMethods, ExecuteDsl, SelectDsl, CountDsl};
 use diesel::result::Error;
 use diesel::result::Error::{NotFound, DatabaseError};
 use diesel::result::DatabaseErrorKind::UniqueViolation;
@@ -24,6 +24,35 @@ impl Encodable for User {
 }
 
 impl User {
+    pub fn is_user_exist(alias: String) -> Result<bool, INError> {
+        let db = DB_CONNECTION.lock().unwrap();
+
+        let result : Result<i64, Error> = users
+            .filter(username.eq(alias))
+            .count()
+            .get_result(db.deref());
+
+        match result {
+            Err(err) => Err(INError::fatal(1, "An error occured while accessing to the database.")),
+            Ok(res) => Ok(res == 1),
+        }
+    }
+
+    pub fn password_match(alias: String, pswd: String) -> Result<bool, INError> {
+        let db = DB_CONNECTION.lock().unwrap();
+
+        let result : Result<i64, Error> = users
+            .filter(username.eq(alias))
+            .filter(password.eq(pswd))
+            .count()
+            .get_result(db.deref());
+
+        match result {
+            Err(err) => Err(INError::fatal(1, "An error occured while accessing to the database.")),
+            Ok(res) => Ok(res == 1),
+        }
+    }
+
     pub fn list_users() -> Result<Vec<User>, INError> {
         let db = DB_CONNECTION.lock().unwrap();
 

@@ -11,6 +11,7 @@ extern crate diesel;
 
 extern crate rustc_serialize;
 extern crate chrono;
+extern crate uuid;
 
 include!(concat!(env!("OUT_DIR"), "/model.rs"));
 
