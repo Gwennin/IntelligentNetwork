@@ -23,7 +23,7 @@ pub fn apply_routes() -> Router {
     router.get("/spaces/:name", SpaceController::list_links, "list_links");
     router.post("/spaces/:name/add/link", SpaceController::add_link, "add_link");
     router.delete("/spaces/:name/delete/link/:id", SpaceController::delete_link, "delete_link");
-    router.put("/spaces/:name/read/:id/:user", SpaceController::set_link_read, "set_link_read");
+    router.put("/spaces/:name/read/:id", SpaceController::set_link_read, "set_link_read");
 
     return router
 }

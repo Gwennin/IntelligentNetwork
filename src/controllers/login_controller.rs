@@ -1,12 +1,13 @@
 use iron::prelude::{Response, IronResult};
 use iron::request::*;
-use iron::headers::{Authorization, Bearer, Basic};
+use iron::headers::{Authorization, Basic};
 use managers::session_manager::SessionManager;
 use chrono::duration::Duration;
 use std::env;
 use std::str::FromStr;
 use std::ops::Add;
 use managers::response_manager::ResponseManager;
+use managers::request_manager::RequestManager;
 use managers::authentication_manager::AuthenticationManager;
 use errors::INError;
 
@@ -41,10 +42,9 @@ impl LoginController {
     }
 
     pub fn is_token_valid(req: &mut Request) -> bool {
-        let auth_header = req.headers.get::<Authorization<Bearer>>();
+        let opt_token = RequestManager::extract_token(req);
 
-        if let Some(header) = auth_header {
-            let token = header.token.clone();
+        if let Some(token) = opt_token {
 
             let date = SessionManager::get_session_opened_date(&token.clone());
 
@@ -70,11 +70,11 @@ impl LoginController {
             return ResponseManager::get_unauthorized();
         }
 
-        let auth_header = req.headers.get::<Authorization<Bearer>>();
+        let opt_token = RequestManager::extract_token(req);
 
-        match auth_header {
-            Some(header) => {
-                SessionManager::close_session(&header.token);
+        match opt_token {
+            Some(token) => {
+                SessionManager::close_session(&token);
                 return ResponseManager::get_response_no_content(&None);
             },
             None => {

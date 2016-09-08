@@ -46,4 +46,9 @@ impl ResponseManager {
     pub fn get_unauthorized() -> IronResult<Response> {
         Ok(Response::with((status::Unauthorized)))
     }
+
+    pub fn get_forbiden() -> IronResult<Response> {
+        Ok(Response::with((status::Forbidden)))
+    }
+
 }
