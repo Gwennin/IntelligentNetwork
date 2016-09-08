@@ -1,11 +1,8 @@
 use iron::prelude::{Response, IronResult};
 use iron::request::*;
-use iron::headers::{Headers, Header, Authorization, Bearer, Basic};
+use iron::headers::{Authorization, Bearer, Basic};
 use managers::session_manager::SessionManager;
-use models::session::Session;
 use chrono::duration::Duration;
-use chrono::datetime::DateTime;
-use chrono::offset::utc::UTC;
 use std::env;
 use std::str::FromStr;
 use std::ops::Add;
