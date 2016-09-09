@@ -1,5 +1,3 @@
-#![allow(unused_variables, unused_must_use)]
-
 extern crate iron;
 extern crate router;
 extern crate dotenv;

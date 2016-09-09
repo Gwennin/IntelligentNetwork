@@ -3,6 +3,7 @@ use iron::request::*;
 use iron::headers::{Authorization, Basic};
 use managers::session_manager::SessionManager;
 use chrono::duration::Duration;
+use chrono::offset::utc::UTC;
 use std::env;
 use std::str::FromStr;
 use std::ops::Add;
@@ -10,6 +11,7 @@ use managers::response_manager::ResponseManager;
 use managers::request_manager::RequestManager;
 use managers::authentication_manager::AuthenticationManager;
 use errors::INError;
+use model::AuthResult;
 
 pub struct LoginController;
 
@@ -26,8 +28,12 @@ impl LoginController {
 
                     if let Some(password) = header.password.clone() {
                         if auth.authenticate(username.clone(), password) {
-                            SessionManager::open_session(&username);
-                            return ResponseManager::get_response_no_content(&None);
+                            let token = SessionManager::open_session(&username);
+
+                            let auth_result = AuthResult {
+                                token: token,
+                            };
+                            return ResponseManager::get_response(&Ok(auth_result));
                         }
                     }
                 }
@@ -45,7 +51,6 @@ impl LoginController {
         let opt_token = RequestManager::extract_token(req);
 
         if let Some(token) = opt_token {
-
             let date = SessionManager::get_session_opened_date(&token.clone());
 
             if let Some(opened_on) = date {
@@ -53,8 +58,9 @@ impl LoginController {
                 let seconds = i64::from_str(&session_timeout).unwrap();
 
                 let expire_date = opened_on.add(Duration::seconds(seconds));
+                let current_date = UTC::now();
 
-                if opened_on.gt(&expire_date) {
+                if current_date.lt(&expire_date) {
                     return true;
                 }
 

@@ -34,7 +34,7 @@ impl Authenticator for DBAuthenticator {
 
         match result {
             Ok(matching) => matching,
-            Err(err) => false,
+            Err(_) => false,
         }
     }
 }

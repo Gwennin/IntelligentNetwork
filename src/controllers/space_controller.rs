@@ -53,7 +53,10 @@ impl SpaceController {
         }
 
         let name = RequestManager::extract_url_part(req, "name").unwrap();
-        let links = Link::list_links(name);
+        let token = RequestManager::extract_token(req).unwrap();
+        let user = SessionManager::get_session_user(&token).unwrap();
+
+        let links = Link::list_links(name, user);
         ResponseManager::get_response(&links)
     }
 
@@ -90,7 +93,6 @@ impl SpaceController {
             return ResponseManager::get_unauthorized();
         }
 
-        let name = RequestManager::extract_url_part(req, "name").unwrap();
         let str_id = RequestManager::extract_url_part(req, "id").unwrap();
         let link_id: i32 = FromStr::from_str(&str_id).unwrap();
         let token = RequestManager::extract_token(req).unwrap();

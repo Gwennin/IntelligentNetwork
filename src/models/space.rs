@@ -31,7 +31,7 @@ impl Space {
         let results = spaces.filter(public.eq(true)).load(db.deref());
 
         match results {
-            Err(err) => Err(INError::fatal(1, "An error occured while accessing to the database.")),
+            Err(_) => Err(INError::fatal(1, "An error occured while accessing to the database.")),
             Ok(res) => Ok(res),
         }
     }
@@ -66,7 +66,7 @@ impl Space {
                 },
                 _ => Some(INError::fatal(1, "An error occured while accessing to the database.")),
             },
-            Ok(res) => None,
+            Ok(_) => None,
         }
     }
 

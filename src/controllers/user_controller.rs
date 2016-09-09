@@ -34,7 +34,7 @@ impl UserController {
         let new_user = User::add_user(&user);
 
         match new_user {
-            Err(ref err) => return ResponseManager::get_response(&new_user),
+            Ok(_) => return ResponseManager::get_response(&new_user),
             _ => {}
         }
 

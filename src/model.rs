@@ -41,6 +41,16 @@ pub struct UserSpace {
 }
 
 #[derive(Queryable, RustcEncodable, Clone)]
+pub struct FullLink {
+    pub link_id: i32,
+    pub link: String,
+    pub posted_by: String,
+    pub posted_in: String,
+    pub posted_on: NaiveDateTime,
+    pub readed: bool
+}
+
+#[derive(Queryable, Clone)]
 pub struct Link {
     pub link_id: i32,
     pub link: String,
@@ -72,3 +82,7 @@ pub struct ReadedLink {
     pub reader: String,
 }
 
+#[derive(RustcEncodable, Clone)]
+pub struct AuthResult {
+    pub token: String
+}

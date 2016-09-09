@@ -1,4 +1,4 @@
-use model::{Link, NewLink, NewInsertableLink, ReadedLink};
+use model::{FullLink, Link, NewLink, NewInsertableLink, ReadedLink};
 use managers::db_manager::*;
 use schema::links::dsl::*;
 use schema::readed_links::dsl::*;
@@ -7,22 +7,31 @@ use diesel::result::Error;
 use diesel::result::Error::{NotFound, DatabaseError};
 use diesel::result::DatabaseErrorKind::UniqueViolation;
 use diesel;
+use diesel::select;
+use diesel::expression::sql;
+use diesel::types;
 use std::ops::Deref;
 use errors::INError;
 
 impl Link {
-    pub fn list_links(space: String) -> Result<Vec<Link>, INError> {
+    pub fn list_links(space: String, username: String) -> Result<Vec<FullLink>, INError> {
         let db = DB_CONNECTION.lock().unwrap();
 
-        let results = links.filter(posted_in.eq(space)).load(db.deref());
+        let results = select(sql::<(types::Integer, types::Text, types::Text, types::Text, types::Timestamp, types::Bool)>(
+            &format!("SELECT l.*, (r.read_id IS NOT NULL) AS readed
+                        FROM links l
+                        LEFT JOIN readed_links r
+                            ON l.id = r.read_link AND r.reader='{}'
+                        WHERE posted_in = '{}'", username, space)))
+            .load(db.deref());
 
         match results {
-            Err(err) => Err(INError::fatal(1, "An error occured while accessing to the database.")),
+            Err(_) => Err(INError::fatal(1, "An error occured while accessing to the database.")),
             Ok(res) => Ok(res),
         }
     }
 
-    pub fn add_link(new_link: &NewLink, space: String) -> Result<Link, INError> {
+    pub fn add_link(new_link: &NewLink, space: String) -> Result<FullLink, INError> {
         let db = DB_CONNECTION.lock().unwrap();
 
         let new_insertable_link = NewInsertableLink {
@@ -44,12 +53,15 @@ impl Link {
                 },
                 _ => return Err(INError::fatal(1, "An error occured while accessing to the database.")),
             },
-            Ok(res) => {
-                let inserted: Result<Link, Error> = links.filter(id.eq(inserted_id.unwrap()))
+            Ok(id_link) => {
+                let inserted = select(sql::<(types::Integer, types::Text, types::Text, types::Text, types::Timestamp, types::Bool)>(
+                    &format!("SELECT l.*, FALSE AS readed
+                                FROM links l
+                                WHERE l.id = {}", id_link)))
                     .get_result(db.deref());
 
                 match inserted {
-                    Err(err) => return Err(INError::fatal(1, "An error occured while accessing to the database.")),
+                    Err(_) => return Err(INError::fatal(1, "An error occured while accessing to the database.")),
                     Ok(res) => return Ok(res),
                 }
             },
@@ -99,7 +111,7 @@ impl Link {
                 NotFound => Some(INError::new(401, "This link doesn't exist.")),
                 _ => Some(INError::fatal(1, "An error occured while accessing to the database.")),
             },
-            Ok(res) => None,
+            Ok(_) => None,
         }
     }
 }

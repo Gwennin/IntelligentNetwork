@@ -33,7 +33,7 @@ impl User {
             .get_result(db.deref());
 
         match result {
-            Err(err) => Err(INError::fatal(1, "An error occured while accessing to the database.")),
+            Err(_) => Err(INError::fatal(1, "An error occured while accessing to the database.")),
             Ok(res) => Ok(res == 1),
         }
     }
@@ -48,7 +48,7 @@ impl User {
             .get_result(db.deref());
 
         match result {
-            Err(err) => Err(INError::fatal(1, "An error occured while accessing to the database.")),
+            Err(_) => Err(INError::fatal(1, "An error occured while accessing to the database.")),
             Ok(res) => Ok(res == 1),
         }
     }
@@ -59,7 +59,7 @@ impl User {
         let results = users.load(db.deref());
 
         match results {
-            Err(err) => Err(INError::fatal(1, "An error occured while accessing to the database.")),
+            Err(_) => Err(INError::fatal(1, "An error occured while accessing to the database.")),
             Ok(res) => Ok(res),
         }
     }
@@ -125,8 +125,8 @@ impl User {
                         .get_result(db.deref());
 
         match updated {
-            Err(err) => Some(INError::fatal(1, "An error occured while accessing to the database.")),
-            Ok(res) => None,
+            Err(_) => Some(INError::fatal(1, "An error occured while accessing to the database.")),
+            Ok(_) => None,
         }
     }
 
@@ -146,7 +146,7 @@ impl User {
                 },
                 _ => return Some(INError::fatal(1, "An error occured while accessing to the database.")),
             },
-            Ok(res) => None,
+            Ok(_) => None,
         }
     }
 
@@ -182,7 +182,7 @@ impl User {
                                 .load(db.deref());
 
         match results {
-            Err(err) => Err(INError::fatal(1, "An error occured while accessing to the database.")),
+            Err(_) => Err(INError::fatal(1, "An error occured while accessing to the database.")),
             Ok(res) => Ok(res),
         }
     }
@@ -196,7 +196,7 @@ impl User {
                                 .load(db.deref());
 
         match results {
-            Err(err) => Err(INError::fatal(1, "An error occured while accessing to the database.")),
+            Err(_) => Err(INError::fatal(1, "An error occured while accessing to the database.")),
             Ok(res) => Ok(res),
         }
     }
