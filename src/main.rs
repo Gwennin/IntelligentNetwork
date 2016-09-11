@@ -17,6 +17,7 @@ mod managers;
 mod controllers;
 mod models;
 mod errors;
+mod timer;
 
 use managers::server_manager::ServerManager;
 

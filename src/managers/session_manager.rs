@@ -3,10 +3,17 @@ use std::collections::HashMap;
 use models::session::Session;
 use chrono::datetime::DateTime;
 use chrono::offset::utc::UTC;
+use timer::Timer;
+use chrono::duration::Duration as ChronoDuration;
+use std::time::Duration as StdDuration;
+use std::env;
+use std::str::FromStr;
+use std::ops::Add;
 
 lazy_static! {
     static ref SESSIONS: Mutex<HashMap<String, Session>> = {
         let hashmap = HashMap::new();
+        SessionManager::clean_sessions();
         Mutex::new(hashmap)
     };
 }
@@ -48,5 +55,36 @@ impl SessionManager {
         let mut hashmap = SESSIONS.lock().unwrap();
 
         hashmap.remove(token);
+    }
+
+    pub fn clean_sessions() {
+        fn do_clean() {
+            let mut hashmap = SESSIONS.lock().unwrap();
+            let mut to_remove = Vec::new();
+
+            for (token, session) in hashmap.iter() {
+                let session_timeout = env::var("SESSION_TIMEOUT").unwrap();
+                let seconds = i64::from_str(&session_timeout).unwrap();
+
+                let expire_date = session.opened_on.add(ChronoDuration::seconds(seconds));
+                let current_date = UTC::now();
+
+                if current_date.ge(&expire_date) {
+                    to_remove.push(token.clone());
+                }
+            }
+
+            for token in to_remove {
+                hashmap.remove(&token);
+                println!("Session {} cleaned", token);
+            }
+        }
+
+        let session_cleanup = env::var("SESSION_CLEANUP").unwrap();
+        let cleanup_seconds = u64::from_str(&session_cleanup).unwrap();
+        let duration = StdDuration::new(cleanup_seconds, 0);
+
+        let timer = Timer::new(duration, do_clean);
+        timer.start_delayed(duration);
     }
 }
